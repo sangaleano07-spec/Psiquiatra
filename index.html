@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#082b4c">
+  <meta name="description" content="Recepción, cotización y seguimiento de pedidos de Tu Socio Logístico SL.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>Tu Socio Logístico SL</title>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <img src="assets/logo-tu-socio-logistico.jpg" alt="Tu Socio Logístico SL">
+    <div><span class="eyebrow">SANDINO EMPRENDIMIENTOS</span><strong>Centro de operaciones</strong></div>
+  </div>
+  <button id="installBtn" class="btn btn-light hidden">Instalar app</button>
+</header>
+
+<main class="shell">
+  <section class="hero">
+    <div>
+      <p class="eyebrow orange">GESTIÓN LOGÍSTICA</p>
+      <h1>Pedidos bajo control.</h1>
+      <p>Recibí, cotizá y seguí cada entrega desde un solo lugar.</p>
+    </div>
+    <div class="hero-mark">SL<span>+</span></div>
+  </section>
+
+  <section class="stats" aria-label="Resumen de pedidos">
+    <article class="stat"><span>Total de pedidos</span><strong id="totalCount">0</strong><small>Registrados</small></article>
+    <article class="stat"><span>Pendientes</span><strong id="pendingCount">0</strong><small>Por gestionar</small></article>
+    <article class="stat"><span>En camino</span><strong id="transitCount">0</strong><small>En distribución</small></article>
+    <article class="stat"><span>Entregados</span><strong id="deliveredCount">0</strong><small>Finalizados</small></article>
+  </section>
+
+  <section class="workspace">
+    <div class="panel form-panel">
+      <div class="section-heading">
+        <div><p class="eyebrow">NUEVA OPERACIÓN</p><h2>Registrar pedido</h2></div>
+        <span class="step">01 / 02</span>
+      </div>
+      <form id="orderForm">
+        <div class="form-grid">
+          <label>Nombre del cliente<input name="customer" required maxlength="90" placeholder="Nombre y apellido"></label>
+          <label>Teléfono / WhatsApp<input name="phone" required inputmode="tel" placeholder="Ej. 0981 123 456"></label>
+          <label class="full">Dirección de retiro<input name="pickup" required placeholder="Lugar donde se recoge el pedido"></label>
+          <label class="full">Dirección de entrega<input name="delivery" required placeholder="Dirección del destinatario"></label>
+          <label class="full">Descripción del pedido<textarea name="description" rows="2" placeholder="Qué se debe retirar o entregar"></textarea></label>
+          <label>Precio de Bolt (Gs.)<input id="boltPrice" name="boltPrice" type="number" min="0" step="100" inputmode="numeric" placeholder="Ej. 20000"></label>
+          <label>Tarifa Tu Socio (Gs.)<input id="ourPrice" name="ourPrice" type="text" readonly placeholder="Se calcula automáticamente"></label>
+          <div class="full quote-note"><span class="quote-icon">↘</span><span><strong>5 % menos que Bolt</strong><br>Tarifa calculada: precio de referencia × 0,95. Confirmá que el precio de Bolt corresponda al mismo recorrido.</span></div>
+          <label>Forma de pago<select name="payment"><option value="Efectivo">Efectivo</option><option value="Transferencia">Transferencia</option><option value="A cobrar">A cobrar al entregar</option></select></label>
+          <label>Observaciones<input name="notes" placeholder="Indicaciones adicionales"></label>
+        </div>
+        <button class="btn btn-primary btn-wide" type="submit">＋ Registrar pedido</button>
+      </form>
+    </div>
+
+    <aside class="panel quick-panel">
+      <p class="eyebrow">COTIZADOR RÁPIDO</p><h2>Calculá tu tarifa</h2>
+      <p class="muted">Ingresá el precio que muestra Bolt para el trayecto.</p>
+      <label>Precio Bolt (Gs.)<input id="quickBolt" type="number" min="0" step="100" placeholder="Ej. 25000"></label>
+      <div class="quick-result"><span>Tu tarifa sugerida</span><strong id="quickResult">Gs. 0</strong><small id="quickSaving">Ahorro para el cliente: Gs. 0</small></div>
+      <p class="fine-print">El valor es una referencia comercial. Revisá distancia, tiempo, demanda y condiciones del servicio antes de confirmar.</p>
+      <div class="divider"></div>
+      <div class="tip"><span>✦</span><p><strong>Atención al cliente</strong><br>Confirmá siempre el punto de retiro, el destino y el precio antes de asignar el envío.</p></div>
+    </aside>
+  </section>
+
+  <section class="panel orders-panel">
+    <div class="section-heading orders-heading">
+      <div><p class="eyebrow">SEGUIMIENTO</p><h2>Pedidos registrados</h2></div>
+      <div class="toolbar">
+        <input id="searchInput" class="search" placeholder="Buscar cliente o dirección…" aria-label="Buscar pedidos">
+        <select id="statusFilter" aria-label="Filtrar por estado"><option value="Todos">Todos los estados</option><option>Recibido</option><option>Preparando</option><option>En camino</option><option>Entregado</option><option>Cancelado</option></select>
+      </div>
+    </div>
+    <div id="ordersList" class="orders-list"><div class="empty"><span>▤</span><strong>Todavía no hay pedidos</strong><p>Los pedidos que registres aparecerán aquí.</p></div></div>
+    <div class="data-actions"><button id="exportBtn" class="btn btn-outline">↓ Exportar pedidos (CSV)</button><button id="clearBtn" class="text-btn">Borrar todos los datos</button></div>
+  </section>
+  <footer><span>© <span id="year"></span> Tu Socio Logístico SL</span><span>Tu socio en cada entrega.</span></footer>
+</main>
+
+<dialog id="detailDialog">
+  <form method="dialog" class="dialog-head"><div><p class="eyebrow">DETALLE DEL PEDIDO</p><h2 id="detailTitle">Pedido</h2></div><button class="close-btn" aria-label="Cerrar">×</button></form>
+  <div id="detailBody"></div>
+  <div class="dialog-actions"><button id="whatsappBtn" class="btn btn-green">Abrir WhatsApp</button><button id="closeDetail" class="btn btn-outline">Cerrar</button></div>
+</dialog>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>
